@@ -1,0 +1,68 @@
+@layout('master')
+@section('content')
+  <div class="box">
+    <h2 class="title">Nueva Tarea</h2>
+  
+    <form action="/tareas" method="POST">
+      {{ csrfField() }}
+  
+      <div class="field has-addons">
+        <div class="control is-expanded">
+          <input class="input" type="text" name="title" value="{{ old('title', '') }}" placeholder="Título de la tarea">
+        </div>
+        <div class="control">
+          <button type="submit" class="button is-primary">
+              Añadir Tarea
+          </button>
+        </div>
+      </div>
+  
+      {{ elIf('<p class="help is-danger">$self</p>', getErrorFor('title'), hasErrorFor('title')) }}
+    </form>
+  </div>
+  @if(old('notification'))
+    <div class="notification is-success">
+        {{ old('notification') }}
+    </div>
+  @endif
+  <div class="box">
+    <h1 class="title">Lista de tareas</h1>
+    <table class="table is-bordered is-striped is-narrow is-fullwidth">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titulo</th>
+          <th>Accion</th> 
+        </tr>
+      </thead>
+      <tbody>
+        @each(tarea in tareas)
+          <tr>
+            <td>
+              {{ ($loop.index + 1) }}
+            </td>
+            <td>
+              {{ tarea.title }}
+            </td>
+            <td>
+                <form action="{{ 'tareas/' + tarea.id + '?_method=DELETE' }}" method="POST">
+                  {{ csrfField() }}
+                
+                  <button type="submit" class="button is-danger is-outlined">
+                    <span>BORRAR</span>
+                    <span class="icon is-small">
+                      <i class="fa fa-times" aria-hidden="true"></i>
+                    </span>
+                  </button>
+                </form>
+            </td>
+          </tr>
+            @else
+              <tr>
+                <td colspan="3" class="has-text-centered">No existen tareas creadas</td>
+              </tr>
+        @endeach
+      </tbody>
+    </table>
+  </div>
+@endsection
